@@ -1,1 +1,509 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proservis | Servicio Técnico en Mostrador</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
 
+  <a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
+
+  <!-- Barra superior simuladora de roles -->
+  <header class="demo-bar">
+    <p class="demo-bar__label"><span aria-hidden="true">⚡</span> Simulador de Vistas y Roles (Proservis):</p>
+    <nav class="demo-bar__controls" aria-label="Selector de vistas del prototipo">
+      <button type="button" class="demo-pill" data-target-view="view-login">1.0 Iniciar sesión</button>
+      <button type="button" class="demo-pill is-active" data-target-view="view-coordinator">2.2 Coordinador (Bandeja)</button>
+      <button type="button" class="demo-pill" data-target-view="view-new-order">2.3 Recepción (Nueva orden)</button>
+      <button type="button" class="demo-pill" data-target-view="view-technician">2.4 Cola del Técnico</button>
+      <button type="button" class="demo-pill" data-target-view="view-client">2.1 Cliente (Mis órdenes)</button>
+      <button type="button" class="demo-pill" data-target-view="view-admin">2.5 Admin (Personal)</button>
+    </nav>
+  </header>
+
+  <div id="app-shell" class="app-shell">
+
+    <!-- Menú lateral institucional filtrado por rol activo (RF-02) -->
+    <aside id="sidebar" class="sidebar" aria-label="Barra lateral de Proservis">
+      <header class="sidebar__brand">
+        <div class="brand-logo">
+          <span class="brand-logo__icon" aria-hidden="true">PS</span>
+          <div>
+            <p class="brand-logo__title">Proservis</p>
+            <span class="brand-logo__subtitle">Servicio Técnico Local</span>
+          </div>
+        </div>
+        <button type="button" id="btn-mobile-menu" class="mobile-menu-toggle" aria-expanded="false" aria-controls="menu-navegacion"><span aria-hidden="true">☰</span> Menú</button>
+      </header>
+
+      <section class="sidebar__user-card" aria-label="Usuario en sesión">
+        <p id="active-user-role" class="sidebar__user-role">Coordinadora de Taller</p>
+        <p id="active-user-name" class="sidebar__user-name">Laura Méndez</p>
+        <p id="active-user-email" class="sidebar__user-email">laura.mendez@proservis.local</p>
+      </section>
+
+      <nav id="menu-navegacion" class="sidebar__nav" aria-label="Menú principal">
+        <p class="sidebar__section-title" data-role-nav="coordinator">Operación de Mostrador</p>
+        <ul class="nav-list" data-role-nav="coordinator">
+          <li><button type="button" class="nav-link is-active" data-target-view="view-coordinator" aria-current="page"><span><span aria-hidden="true">■</span> Bandeja de órdenes</span><span class="nav-link__code">2.2</span></button></li>
+          <li><button type="button" class="nav-link" data-target-view="view-new-order"><span><span aria-hidden="true">+</span> Nueva orden (Recepción)</span><span class="nav-link__code">2.3</span></button></li>
+        </ul>
+        <p class="sidebar__section-title hidden" data-role-nav="technician">Taller Técnico</p>
+        <ul class="nav-list hidden" data-role-nav="technician">
+          <li><button type="button" class="nav-link" data-target-view="view-technician"><span><span aria-hidden="true">⚙</span> Cola del técnico</span><span class="nav-link__code">2.4</span></button></li>
+        </ul>
+        <p class="sidebar__section-title hidden" data-role-nav="client">Portal del Cliente</p>
+        <ul class="nav-list hidden" data-role-nav="client">
+          <li><button type="button" class="nav-link" data-target-view="view-client"><span><span aria-hidden="true">●</span> Mis órdenes</span><span class="nav-link__code">2.1</span></button></li>
+        </ul>
+        <p class="sidebar__section-title hidden" data-role-nav="admin">Administración</p>
+        <ul class="nav-list hidden" data-role-nav="admin">
+          <li><button type="button" class="nav-link" data-target-view="view-admin"><span><span aria-hidden="true">♦</span> Usuarios del personal</span><span class="nav-link__code">2.5</span></button></li>
+        </ul>
+      </nav>
+
+      <footer class="sidebar__footer">
+        <p class="sidebar__mode-badge"><span aria-hidden="true">▸</span> Modalidad: Solo mostrador local</p>
+        <button type="button" id="btn-logout" class="btn-logout" data-target-view="view-login">Cerrar sesión (1.0)</button>
+      </footer>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <main id="contenido-principal" class="main-area" tabindex="-1">
+      <header id="topbar" class="topbar">
+        <nav class="breadcrumb" aria-label="Ruta de navegación">
+          <span>Proservis</span><span aria-hidden="true">/</span>
+          <span id="breadcrumb-current" class="breadcrumb__current">2.2 Bandeja del Coordinador</span>
+        </nav>
+        <p class="counter-notice">Atención exclusiva en mostrador (Sin envíos)</p>
+      </header>
+
+      <div class="content-wrapper">
+        <header id="page-header" class="page-header">
+          <div>
+            <h1 id="page-main-title" class="page-header__title">Bandeja general de órdenes (2.2)</h1>
+            <p id="page-main-subtitle" class="page-header__subtitle">Supervisión de órdenes activas en taller, asignación de técnicos y entregas en mostrador.</p>
+          </div>
+          <div class="page-header__actions">
+            <button type="button" id="action-go-new-order" class="btn btn-primary" data-target-view="view-new-order">+ Registrar nueva orden (2.3)</button>
+            <button type="button" id="action-back-coordinator" class="btn btn-secondary hidden" data-target-view="view-coordinator"><span aria-hidden="true">←</span> Volver a Bandeja (2.2)</button>
+            <div id="action-tech-switcher" class="tech-filter-group hidden">
+              <label for="tech-switcher" class="form-label">Ver cola de:</label>
+              <select id="tech-switcher" class="form-control tech-filter-select" aria-describedby="tech-switcher-hint"><option value="Carlos Ruiz">Carlos Ruiz</option><option value="Diego Santos">Diego Santos</option></select><small id="tech-switcher-hint" class="sr-only">Seleccione el técnico para filtrar su cola</small>
+            </div>
+            <span id="action-client-readonly" class="badge badge-neutral hidden">Vista de solo lectura</span>
+            <button type="button" id="btn-open-staff-modal" class="btn btn-primary hidden" aria-haspopup="dialog" aria-controls="staff-modal-backdrop">+ Dar de alta personal</button>
+          </div>
+        </header>
+
+        <!-- A. PANTALLA 1.0: INICIAR SESIÓN -->
+        <section id="view-login" class="view-section hidden" aria-labelledby="page-main-title">
+          <div class="login-wrapper">
+            <article class="login-card">
+              <header class="login-card__header">
+                <p class="login-card__badge">Atención Exclusiva en Mostrador Local</p>
+                <h2>Acceso a Proservis</h2>
+                <p class="login-card__subtitle">Sistema de Gestión de Servicio Técnico y Reparación</p>
+              </header>
+              <div class="login-card__body">
+                <aside class="info-banner" role="note"><span aria-hidden="true">i</span><p><strong>Acceso para clientes y personal:</strong> Las credenciales del cliente se generan automáticamente al recibir su equipo en mostrador.</p></aside>
+                <p id="login-error" class="form-error hidden" role="alert"></p>
+                <form id="login-form" novalidate>
+                  <div class="form-group">
+                    <label for="login-email" class="form-label">Correo electrónico <span class="req-mark" aria-hidden="true">*</span></label>
+                    <input type="email" id="login-email" class="form-control" value="laura.mendez@proservis.local" aria-describedby="login-email-hint" required />
+                    <small id="login-email-hint" class="form-hint">Use su correo institucional o el registrado en mostrador.</small>
+                  </div>
+                  <div class="form-group">
+                    <label for="login-password" class="form-label">Contraseña <span class="req-mark" aria-hidden="true">*</span></label>
+                    <input type="password" id="login-password" class="form-control" value="proservis2026" aria-describedby="login-password-hint" required />
+                    <small id="login-password-hint" class="form-hint">Entregada en el comprobante de recepción o por administración.</small>
+                  </div>
+                  <div class="login-options">
+                    <label for="login-remember" class="checkbox-label"><input type="checkbox" id="login-remember" aria-describedby="login-remember-hint" checked /> <span>Recordar sesión</span></label><small id="login-remember-hint" class="sr-only">Mantiene la sesión iniciada</small>
+                    <a href="#recuperar" id="forgot-password-link" aria-label="Recuperar contraseña olvidada de acceso a Proservis">Olvidé mi contraseña</a>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
+                </form>
+                <section class="login-quick-roles" aria-labelledby="quick-roles-heading">
+                  <h3 id="quick-roles-heading" class="login-quick-roles__title">Ingreso rápido por rol:</h3>
+                  <div class="grid-2">
+                    <button type="button" class="btn btn-secondary btn-sm" data-target-view="view-coordinator">Laura Méndez (Coord.)</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-target-view="view-technician">Carlos Ruiz (Técnico)</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-target-view="view-client">María López (Cliente)</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-target-view="view-admin">Admin General</button>
+                  </div>
+                </section>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- B.1 PANTALLA 2.2: BANDEJA DEL COORDINADOR -->
+        <section id="view-coordinator" class="view-section" aria-labelledby="page-main-title">
+          <section class="grid-4" aria-labelledby="kpi-coord-heading">
+            <h2 id="kpi-coord-heading" class="sr-only">Indicadores rápidos de órdenes</h2>
+            <article class="kpi-card"><p class="kpi-label">Órdenes abiertas</p><p class="kpi-value"><strong id="kpi-open">4</strong></p><p class="kpi-meta">Activas en taller local</p></article>
+            <article class="kpi-card kpi-amber"><p class="kpi-label">Recibidas sin técnico</p><p class="kpi-value"><strong id="kpi-unassigned">1</strong></p><p class="kpi-meta">Requieren asignación</p></article>
+            <article class="kpi-card kpi-blue"><p class="kpi-label">En reparación</p><p class="kpi-value"><strong id="kpi-repair">1</strong></p><p class="kpi-meta">Intervención en curso</p></article>
+            <article class="kpi-card kpi-green"><p class="kpi-label">Listas para entrega</p><p class="kpi-value"><strong id="kpi-ready">1</strong></p><p class="kpi-meta">Retiro en mostrador</p></article>
+          </section>
+
+          <section class="card" aria-labelledby="coord-table-heading">
+            <h2 id="coord-table-heading" class="card__title">Listado de órdenes en taller</h2>
+            <p class="card__subtitle">Filtre por folio, cliente, estado operativo o técnico responsable.</p>
+
+            <form id="coord-filter-form" class="filters-bar" aria-label="Filtros de órdenes">
+              <div class="form-group">
+                <label for="filter-search" class="form-label">Buscar por folio o cliente</label>
+                <input type="search" id="filter-search" class="form-control" placeholder="Ej. PS-2610-0041 o María López" aria-describedby="filter-search-hint" /><small id="filter-search-hint" class="sr-only">Escriba el folio o nombre del cliente</small>
+              </div>
+              <div class="form-group">
+                <label for="filter-status" class="form-label">Estado</label>
+                <select id="filter-status" class="form-control" aria-describedby="filter-status-hint"><option value="ALL">Todos los estados</option><option value="Recibida">Recibida</option><option value="En reparación">En reparación</option><option value="En espera de repuesto">En espera de repuesto</option><option value="Lista para entrega">Lista para entrega</option><option value="Entregada">Entregada</option><option value="Cancelada">Cancelada</option></select><small id="filter-status-hint" class="sr-only">Filtre por estado operativo</small>
+              </div>
+              <div class="form-group">
+                <label for="filter-tech" class="form-label">Técnico</label>
+                <select id="filter-tech" class="form-control" aria-describedby="filter-tech-hint"><option value="ALL">Todos los técnicos</option><option value="Sin asignar">Sin asignar</option><option value="Carlos Ruiz">Carlos Ruiz</option><option value="Diego Santos">Diego Santos</option></select><small id="filter-tech-hint" class="sr-only">Filtre por técnico asignado</small>
+              </div>
+              <button type="button" id="btn-clear-filters" class="btn btn-secondary">Limpiar filtros</button>
+            </form>
+
+            <div class="table-container" tabindex="0">
+              <table class="data-table">
+                <caption class="sr-only">Bandeja general de órdenes de servicio en mostrador</caption>
+                <thead><tr><th scope="col">Folio</th><th scope="col">Cliente</th><th scope="col">Equipo</th><th scope="col">Estado</th><th scope="col">Técnico asignado</th><th scope="col">Recepción</th><th scope="col">Acción</th></tr></thead>
+                <tbody id="coord-orders-tbody">
+                  <tr data-folio="PS-2610-0041" data-client="María López" data-contact="555-0142 · maria.lopez@correo.com" data-device="Laptop · Lenovo ThinkPad T14" data-status="En reparación" data-tech="Carlos Ruiz" data-date="26/10/2026 09:40" data-fault="No enciende al conectar el cargador USB-C; el LED parpadea tres veces y se apaga.">
+                    <th scope="row"><span class="folio-tag">PS-2610-0041</span></th><td><strong>María López</strong><p class="cell-subtext">555-0142</p></td><td>Laptop · Lenovo ThinkPad T14</td><td><span class="badge badge-blue">En reparación</span></td><td>Carlos Ruiz</td><td>26/10/2026 09:40</td><td><button type="button" class="table-action-btn" data-open-detail aria-label="Ver detalle de la orden PS-2610-0041">Ver orden <span aria-hidden="true">→</span></button></td>
+                  </tr>
+                  <tr data-folio="PS-2610-0042" data-client="Jorge Ramírez" data-contact="555-0189 · jorge.ramirez@correo.com" data-device="Celular · Samsung Galaxy S23" data-status="En espera de repuesto" data-tech="Diego Santos" data-date="26/10/2026 10:15" data-fault="Pantalla con líneas verdes verticales tras caída y cristal frontal fracturado.">
+                    <th scope="row"><span class="folio-tag">PS-2610-0042</span></th><td><strong>Jorge Ramírez</strong><p class="cell-subtext">555-0189</p></td><td>Celular · Samsung Galaxy S23</td><td><span class="badge badge-amber">En espera de repuesto</span></td><td>Diego Santos</td><td>26/10/2026 10:15</td><td><button type="button" class="table-action-btn" data-open-detail aria-label="Ver detalle de la orden PS-2610-0042">Ver orden <span aria-hidden="true">→</span></button></td>
+                  </tr>
+                  <tr data-folio="PS-2610-0043" data-client="María López" data-contact="555-0142 · maria.lopez@correo.com" data-device="PC · Dell OptiPlex 7090" data-status="Lista para entrega" data-tech="Carlos Ruiz" data-date="24/10/2026 16:10" data-fault="Reinicio continuo al abrir programas de diseño y ruido excesivo en ventilador.">
+                    <th scope="row"><span class="folio-tag">PS-2610-0043</span></th><td><strong>María López</strong><p class="cell-subtext">555-0142</p></td><td>PC · Dell OptiPlex 7090</td><td><span class="badge badge-green">Lista para entrega</span></td><td>Carlos Ruiz</td><td>24/10/2026 16:10</td><td><button type="button" class="table-action-btn" data-open-detail aria-label="Ver detalle de la orden PS-2610-0043">Ver orden <span aria-hidden="true">→</span></button></td>
+                  </tr>
+                  <tr data-folio="PS-2610-0046" data-client="Patricia Morales" data-contact="555-0440 · patricia.morales@correo.com" data-device="Otro · Nintendo Switch OLED" data-status="Recibida" data-tech="Sin asignar" data-date="26/10/2026 12:50" data-fault="No da video en el Dock a TV, pero sí funciona en modo portátil.">
+                    <th scope="row"><span class="folio-tag">PS-2610-0046</span></th><td><strong>Patricia Morales</strong><p class="cell-subtext">555-0440</p></td><td>Otro · Nintendo Switch OLED</td><td><span class="badge badge-amber">Recibida</span></td><td>Sin asignar</td><td>26/10/2026 12:50</td><td><button type="button" class="table-action-btn" data-open-detail aria-label="Ver detalle de la orden PS-2610-0046">Ver orden <span aria-hidden="true">→</span></button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <!-- B.2 PANTALLA 3.0: DETALLE DE ORDEN (NIVEL 3 - SOLO ACCESO CONTEXTUAL) -->
+        <section id="view-order-detail" class="view-section hidden" aria-labelledby="page-main-title">
+          <div class="split-layout">
+            <div>
+              <article class="card card--spaced" aria-labelledby="detail-summary-heading">
+                <header class="card__header-bar"><h2 id="detail-summary-heading" class="card__title">Resumen del caso y equipo</h2><span id="detail-status-badge" class="badge badge-blue">En reparación</span></header>
+                <dl class="detail-summary-grid">
+                  <div><dt class="detail-label">Folio de Orden</dt><dd id="detail-folio" class="detail-value">PS-2610-0041</dd></div>
+                  <div><dt class="detail-label">Fecha de Recepción</dt><dd id="detail-date" class="detail-value">26/10/2026 09:40</dd></div>
+                  <div><dt class="detail-label">Cliente</dt><dd id="detail-client" class="detail-value">María López</dd></div>
+                  <div><dt class="detail-label">Contacto Cliente</dt><dd id="detail-contact" class="detail-value">555-0142 · maria.lopez@correo.com</dd></div>
+                  <div><dt class="detail-label">Equipo Recibido</dt><dd id="detail-device" class="detail-value">Laptop · Lenovo ThinkPad T14</dd></div>
+                  <div><dt class="detail-label">Técnico Asignado</dt><dd id="detail-tech" class="detail-value">Carlos Ruiz</dd></div>
+                </dl>
+                <h3 class="detail-label">Falla reportada en mostrador</h3>
+                <p id="detail-fault" class="fault-callout">No enciende al conectar el cargador USB-C; el LED parpadea tres veces y se apaga.</p>
+              </article>
+              <article class="card" aria-labelledby="detail-timeline-heading">
+                <h2 id="detail-timeline-heading" class="card__title">Actividad de la orden (Bitácora)</h2>
+                <p class="card__subtitle">Historial cronológico de cambios de estado y observaciones.</p>
+                <ol id="detail-timeline" class="timeline" aria-live="polite">
+                  <li class="timeline-item"><div class="timeline-item__header"><span class="timeline-item__author">Carlos Ruiz (Técnico)</span><time class="timeline-item__date">26/10/2026 11:20</time></div><p class="timeline-item__body">Estado actualizado a "En reparación". Diagnóstico inicial: falla en etapa USB-C.</p></li>
+                  <li class="timeline-item"><div class="timeline-item__header"><span class="timeline-item__author">Laura Méndez (Coordinadora)</span><time class="timeline-item__date">26/10/2026 10:05</time></div><p class="timeline-item__body">Orden asignada al técnico Carlos Ruiz.</p></li>
+                  <li class="timeline-item"><div class="timeline-item__header"><span class="timeline-item__author">Laura Méndez (Recepción)</span><time class="timeline-item__date">26/10/2026 09:40</time></div><p class="timeline-item__body">Equipo recibido en mostrador local. Estado inicial: Recibida.</p></li>
+                </ol>
+              </article>
+            </div>
+
+            <aside class="card" aria-labelledby="detail-manage-heading">
+              <h2 id="detail-manage-heading" class="card__title">Gestión de la orden</h2>
+              <p class="card__subtitle">Reasignar técnico, actualizar estado o confirmar entrega/cancelación.</p>
+              <form id="detail-manage-form">
+                <div class="form-group">
+                  <label for="detail-select-tech" class="form-label">Reasignar técnico</label>
+                  <select id="detail-select-tech" class="form-control" aria-describedby="detail-tech-hint"><option value="Sin asignar">Sin asignar</option><option value="Carlos Ruiz">Carlos Ruiz</option><option value="Diego Santos">Diego Santos</option></select>
+                  <small id="detail-tech-hint" class="form-hint">Técnico responsable en taller.</small>
+                </div>
+                <div class="form-group">
+                  <label for="detail-select-status" class="form-label">Estado de la orden</label>
+                  <select id="detail-select-status" class="form-control" aria-describedby="detail-status-hint"><option value="Recibida">Recibida</option><option value="En reparación">En reparación</option><option value="En espera de repuesto">En espera de repuesto</option><option value="Lista para entrega">Lista para entrega</option><option value="Entregada">Entregada</option></select>
+                  <small id="detail-status-hint" class="form-hint">Visible para el cliente en su portal.</small>
+                </div>
+                <div class="form-group">
+                  <label for="detail-comment" class="form-label">Comentario para la bitácora</label>
+                  <textarea id="detail-comment" class="form-control" placeholder="Nota de coordinación o acuerdo en mostrador..." aria-describedby="detail-comment-hint"></textarea>
+                  <small id="detail-comment-hint" class="form-hint">Opcional al guardar cambios.</small>
+                </div>
+                <div class="action-stack">
+                  <button type="submit" class="btn btn-primary btn-block">Guardar cambios</button>
+                  <button type="button" id="btn-mark-delivered" class="btn btn-success btn-block"><span aria-hidden="true">✓</span> Marcar entregada</button>
+                  <button type="button" id="btn-toggle-cancel" class="btn btn-danger-outline btn-block" aria-expanded="false" aria-controls="cancel-confirm-box"><span aria-hidden="true">✕</span> Cancelar orden</button>
+                </div>
+              </form>
+              <section id="cancel-confirm-box" class="cancel-confirm-box hidden" aria-labelledby="cancel-box-title" aria-live="polite">
+                <h3 id="cancel-box-title" class="cancel-confirm-box__title">Confirmación obligatoria de cancelación (RF-08 / RNF-02)</h3>
+                <p class="cancel-confirm-box__desc">Registre el motivo obligatorio antes de cancelar definitivamente.</p>
+                <p id="cancel-reason-error" class="form-error hidden" role="alert"></p>
+                <div class="form-group">
+                  <label for="cancel-reason-input" class="form-label">Motivo obligatorio <span class="req-mark" aria-hidden="true">*</span></label>
+                  <textarea id="cancel-reason-input" class="form-control" placeholder="Ej. Cliente decide no aprobar reparación..." aria-describedby="cancel-reason-hint" required></textarea>
+                  <small id="cancel-reason-hint" class="form-hint">Quedará auditado en la bitácora.</small>
+                </div>
+                <div class="inline-actions"><button type="button" id="btn-confirm-cancel" class="btn btn-danger btn-sm">Confirmar cancelación</button><button type="button" id="btn-abort-cancel" class="btn btn-secondary btn-sm">Volver atrás</button></div>
+              </section>
+            </aside>
+          </div>
+        </section>
+
+        <!-- C. PANTALLA 2.3: NUEVA ORDEN (RECEPCIÓN - RNF-01) -->
+        <section id="view-new-order" class="view-section hidden" aria-labelledby="page-main-title">
+          <form id="reception-form" class="split-layout" novalidate>
+            <section class="card" aria-labelledby="rec-form-heading">
+              <h2 id="rec-form-heading" class="card__title">Datos esenciales de recepción en mostrador (RNF-01)</h2>
+              <p class="card__subtitle">Los 6 campos marcados con asterisco son obligatorios.</p>
+              <p id="reception-error" class="form-error hidden" role="alert"></p>
+              <div class="grid-2">
+                <div class="form-group">
+                  <label for="rec-client-name" class="form-label">1. Nombre completo del cliente <span class="req-mark" aria-hidden="true">*</span></label>
+                  <input type="text" id="rec-client-name" class="form-control" placeholder="Ej. Roberto Gómez Vega" aria-describedby="rec-name-hint" required />
+                  <small id="rec-name-hint" class="form-hint">Titular que entrega el equipo.</small>
+                </div>
+                <div class="form-group">
+                  <label for="rec-client-phone" class="form-label">2. Teléfono <span class="req-mark" aria-hidden="true">*</span></label>
+                  <input type="tel" id="rec-client-phone" class="form-control" placeholder="Ej. 555-0198" aria-describedby="rec-phone-hint" required />
+                  <small id="rec-phone-hint" class="form-hint">Teléfono de contacto en sucursal.</small>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="rec-client-email" class="form-label">3. Correo electrónico <span class="req-mark" aria-hidden="true">*</span></label>
+                <input type="email" id="rec-client-email" class="form-control" placeholder="Ej. roberto.gomez@correo.com" aria-describedby="rec-email-hint" required />
+                <small id="rec-email-hint" class="form-hint">Si no existe, el sistema genera automáticamente el usuario rol <strong>Cliente</strong>.</small>
+              </div>
+              <div class="grid-2">
+                <div class="form-group">
+                  <label for="rec-device-type" class="form-label">4. Tipo de equipo <span class="req-mark" aria-hidden="true">*</span></label>
+                  <select id="rec-device-type" class="form-control" aria-describedby="rec-type-hint" required>
+                    <option value="">Seleccione tipo...</option><option value="Laptop">Laptop</option><option value="PC">PC</option><option value="Celular">Celular</option><option value="Otro">Otro</option>
+                  </select>
+                  <small id="rec-type-hint" class="form-hint">Categoría del equipo.</small>
+                </div>
+                <div class="form-group">
+                  <label for="rec-device-brand" class="form-label">5. Marca y Modelo <span class="req-mark" aria-hidden="true">*</span></label>
+                  <input type="text" id="rec-device-brand" class="form-control" placeholder="Ej. HP Pavilion 15" aria-describedby="rec-brand-hint" required />
+                  <small id="rec-brand-hint" class="form-hint">Marca y referencia exacta.</small>
+                </div>
+              </div>
+              <div class="form-group form-group--flush">
+                <label for="rec-fault" class="form-label">6. Falla reportada <span class="req-mark" aria-hidden="true">*</span></label>
+                <textarea id="rec-fault" class="form-control" placeholder="Síntomas reportados en mostrador..." aria-describedby="rec-fault-hint" required></textarea>
+                <small id="rec-fault-hint" class="form-hint">Descripción breve del problema observado.</small>
+              </div>
+            </section>
+
+            <aside class="card" aria-labelledby="rec-summary-heading">
+              <h2 id="rec-summary-heading" class="card__title">Resumen de ingreso</h2>
+              <p class="card__subtitle">Verifique el folio antes de confirmar recepción.</p>
+              <section class="summary-box" aria-label="Folio autogenerado">
+                <p class="detail-label">Próximo folio autogenerado</p>
+                <p id="next-folio-preview" class="summary-folio">PS-2610-0047</p>
+                <p class="detail-label">Estado inicial asignado</p>
+                <span class="badge badge-amber">Recibida</span>
+              </section>
+              <aside class="info-banner info-amber" role="note"><span aria-hidden="true">▸</span><p><strong>Mostrador local:</strong> El retiro es únicamente presencial presentando el folio.</p></aside>
+              <button type="submit" class="btn btn-primary btn-block">Registrar orden</button>
+            </aside>
+          </form>
+        </section>
+
+        <!-- D. PANTALLA 2.4: COLA DEL TÉCNICO (RF-06) -->
+        <section id="view-technician" class="view-section hidden" aria-labelledby="page-main-title">
+          <section class="grid-3" aria-labelledby="kpi-tech-heading">
+            <h2 id="kpi-tech-heading" class="sr-only">Contadores de carga del técnico</h2>
+            <article class="kpi-card"><p class="kpi-label">Asignadas a mí</p><p class="kpi-value"><strong id="tech-kpi-assigned">2</strong></p><p class="kpi-meta">Órdenes activas</p></article>
+            <article class="kpi-card kpi-blue"><p class="kpi-label">En reparación</p><p class="kpi-value"><strong id="tech-kpi-repair">1</strong></p><p class="kpi-meta">En banco de trabajo</p></article>
+            <article class="kpi-card kpi-amber"><p class="kpi-label">En espera de repuesto</p><p class="kpi-value"><strong id="tech-kpi-parts">1</strong></p><p class="kpi-meta">Pendientes de pieza</p></article>
+          </section>
+
+          <div class="split-layout">
+            <section class="card" aria-labelledby="tech-table-heading">
+              <h2 id="tech-table-heading" class="card__title">Mis órdenes asignadas</h2>
+              <p class="card__subtitle">Técnico: <strong id="tech-session-name">Carlos Ruiz</strong>. Pulse Intervenir para cargar la ficha.</p>
+              <div class="table-container" tabindex="0">
+                <table class="data-table">
+                  <caption class="sr-only">Órdenes asignadas al técnico en sesión</caption>
+                  <thead><tr><th scope="col">Folio</th><th scope="col">Equipo</th><th scope="col">Falla</th><th scope="col">Estado</th><th scope="col">Acción</th></tr></thead>
+                  <tbody id="tech-orders-tbody">
+                    <tr class="is-selected" data-folio="PS-2610-0041" data-tech="Carlos Ruiz" data-device="Laptop · Lenovo ThinkPad T14 (María López)" data-status="En reparación" data-diagnosis="Se reemplazó controlador USB-C (CD3215) en placa madre. Carga estable a 20V." data-part="Controlador PD USB-C TI" data-minutes="90">
+                      <th scope="row"><span class="folio-tag">PS-2610-0041</span></th><td><strong>Laptop</strong><p class="cell-subtext">Lenovo ThinkPad T14</p></td><td>No enciende con cargador USB-C.</td><td><span class="badge badge-blue">En reparación</span></td><td><button type="button" class="table-action-btn" data-select-tech aria-label="Seleccionar orden PS-2610-0041 para registrar intervención">Intervenir <span aria-hidden="true">→</span></button></td>
+                    </tr>
+                    <tr data-folio="PS-2610-0044" data-tech="Carlos Ruiz" data-device="Laptop · MacBook Air M1 (Elena Torres)" data-status="En espera de repuesto" data-diagnosis="Limpieza química de placa exitosa. Se solicita Top Case por teclas dañadas." data-part="Top Case Español ISO A2337" data-minutes="120">
+                      <th scope="row"><span class="folio-tag">PS-2610-0044</span></th><td><strong>Laptop</strong><p class="cell-subtext">MacBook Air M1</p></td><td>Teclas dañadas tras derrame.</td><td><span class="badge badge-amber">En espera de repuesto</span></td><td><button type="button" class="table-action-btn" data-select-tech aria-label="Seleccionar orden PS-2610-0044 para registrar intervención">Intervenir <span aria-hidden="true">→</span></button></td>
+                    </tr>
+                    <tr class="hidden" data-folio="PS-2610-0042" data-tech="Diego Santos" data-device="Celular · Samsung Galaxy S23 (Jorge Ramírez)" data-status="En espera de repuesto" data-diagnosis="Requiere reemplazo de módulo display AMOLED completo." data-part="Display AMOLED S23 Original" data-minutes="60">
+                      <th scope="row"><span class="folio-tag">PS-2610-0042</span></th><td><strong>Celular</strong><p class="cell-subtext">Samsung Galaxy S23</p></td><td>Pantalla fracturada con líneas.</td><td><span class="badge badge-amber">En espera de repuesto</span></td><td><button type="button" class="table-action-btn" data-select-tech aria-label="Seleccionar orden PS-2610-0042 para registrar intervención">Intervenir <span aria-hidden="true">→</span></button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <aside class="card" aria-labelledby="tech-rf06-heading">
+              <header class="card__header-bar"><h2 id="tech-rf06-heading" class="card__title">Registro de intervención (RF-06)</h2><span id="tech-selected-folio" class="folio-tag">PS-2610-0041</span></header>
+              <p id="tech-selected-device" class="card__subtitle">Laptop · Lenovo ThinkPad T14 (María López)</p>
+              <p id="tech-error" class="form-error hidden" role="alert"></p>
+              <form id="tech-intervention-form" novalidate>
+                <div class="form-group">
+                  <label for="tech-status-select" class="form-label">Estado técnico <span class="req-mark" aria-hidden="true">*</span></label>
+                  <select id="tech-status-select" class="form-control" aria-describedby="tech-status-hint" required><option value="En reparación">En reparación</option><option value="En espera de repuesto">En espera de repuesto</option><option value="Lista para entrega">Lista para entrega</option></select>
+                  <small id="tech-status-hint" class="form-hint">Estado operativo en banco de trabajo.</small>
+                </div>
+                <div class="form-group">
+                  <label for="tech-diagnosis" class="form-label">Diagnóstico y trabajo realizado <span class="req-mark" aria-hidden="true">*</span></label>
+                  <textarea id="tech-diagnosis" class="form-control" rows="4" aria-describedby="tech-diagnosis-hint" required>Se reemplazó controlador USB-C (CD3215) en placa madre. Carga estable a 20V.</textarea>
+                  <small id="tech-diagnosis-hint" class="form-hint">Se guardará en la bitácora del caso.</small>
+                </div>
+                <div class="grid-2">
+                  <div class="form-group">
+                    <label for="tech-part" class="form-label">Repuesto requerido / usado</label>
+                    <input type="text" id="tech-part" class="form-control" value="Controlador PD USB-C TI" aria-describedby="tech-part-hint" />
+                    <small id="tech-part-hint" class="form-hint">Pieza usada o solicitada.</small>
+                  </div>
+                  <div class="form-group">
+                    <label for="tech-time" class="form-label">Tiempo estimado (min)</label>
+                    <input type="number" id="tech-time" class="form-control" min="5" step="5" value="90" aria-describedby="tech-time-hint" />
+                    <small id="tech-time-hint" class="form-hint">Minutos estimados.</small>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Guardar intervención</button>
+              </form>
+            </aside>
+          </div>
+        </section>
+
+        <!-- E. PANTALLA 2.1: MIS ÓRDENES (CLIENTE - SOLO LECTURA) -->
+        <section id="view-client" class="view-section hidden" aria-labelledby="page-main-title">
+          <div class="split-layout">
+            <article class="card" aria-labelledby="client-progress-heading">
+              <header class="card__header-bar">
+                <div>
+                  <h2 id="client-progress-heading" class="card__title">Seguimiento del Folio <span id="client-active-folio" class="folio-tag">PS-2610-0041</span></h2>
+                  <p id="client-active-device" class="card__subtitle card__subtitle--tight">Laptop · Lenovo ThinkPad T14 — 26/10/2026 09:40</p>
+                </div>
+                <span id="client-active-badge" class="badge badge-blue">En reparación</span>
+              </header>
+
+              <ol id="client-stepper" class="stepper" aria-label="Progreso de la orden por pasos">
+                <li class="step-item is-completed" data-step="1"><span class="step-num" aria-hidden="true">1</span><div><span class="step-label">1. Recibida</span><span class="step-sub">En mostrador</span></div></li>
+                <li class="step-item is-completed" data-step="2"><span class="step-num" aria-hidden="true">2</span><div><span class="step-label">2. Asignada</span><span class="step-sub">Técnico designado</span></div></li>
+                <li class="step-item is-current" data-step="3" aria-current="step"><span class="step-num" aria-hidden="true">3</span><div><span class="step-label">3. En reparación</span><span class="step-sub">En taller</span></div></li>
+                <li class="step-item" data-step="4"><span class="step-num" aria-hidden="true">4</span><div><span class="step-label">4. Lista para entrega</span><span class="step-sub">Retiro en local</span></div></li>
+              </ol>
+
+              <section class="info-banner info-green" aria-live="polite" aria-labelledby="client-latest-title">
+                <span aria-hidden="true">✓</span>
+                <div>
+                  <h3 id="client-latest-title">Último avance registrado por el taller:</h3>
+                  <p id="client-latest-update">Técnico Carlos Ruiz inició reparación en etapa de potencia USB-C.</p>
+                  <p class="info-emphasis">Aviso de entrega: Cuando el paso 4 indique "Lista para entrega", pase a retirar su equipo en mostrador con su folio e identificación.</p>
+                </div>
+              </section>
+            </article>
+
+            <aside class="card" aria-labelledby="client-pickup-heading">
+              <h2 id="client-pickup-heading" class="card__title">Información para retiro en mostrador</h2>
+              <p class="card__subtitle">Atención exclusiva en sucursal física (sin envíos ni domicilio).</p>
+              <dl class="summary-box">
+                <dt class="detail-label">Horario de atención</dt><dd class="detail-value detail-value--spaced">Lun a Vie: 09:00 a 18:30 hrs · Sáb: 09:30 a 14:00 hrs</dd>
+                <dt class="detail-label">Teléfono de sucursal</dt><dd class="detail-value detail-value--spaced">(55) 4820-9100 · Ext. 102</dd>
+                <dt class="detail-label">Dirección</dt><dd class="detail-value">Av. Tecnológico #415, Local B, Col. Centro</dd>
+              </dl>
+              <p class="readonly-note">Vista de solo lectura. Comuníquese al taller si requiere aclaraciones indicando su folio.</p>
+            </aside>
+          </div>
+
+          <section class="card card--top-spaced" aria-labelledby="client-history-heading">
+            <h2 id="client-history-heading" class="card__title">Historial de folios de María López</h2>
+            <p class="card__subtitle">Seleccione una orden para actualizar la barra de progreso superior.</p>
+            <div class="table-container" tabindex="0">
+              <table class="data-table">
+                <caption class="sr-only">Historial de folios de la clienta María López</caption>
+                <thead><tr><th scope="col">Folio</th><th scope="col">Equipo</th><th scope="col">Falla</th><th scope="col">Recepción</th><th scope="col">Estado</th><th scope="col">Consulta</th></tr></thead>
+                <tbody id="client-orders-tbody">
+                  <tr class="is-selected" data-folio="PS-2610-0041" data-device="Laptop · Lenovo ThinkPad T14 — 26/10/2026 09:40" data-status="En reparación" data-step="3" data-update="Técnico Carlos Ruiz inició reparación en etapa de potencia USB-C.">
+                    <th scope="row"><span class="folio-tag">PS-2610-0041</span></th><td>Laptop · Lenovo ThinkPad T14</td><td>No enciende con cargador USB-C.</td><td>26/10/2026 09:40</td><td><span class="badge badge-blue">En reparación</span></td><td><button type="button" class="table-action-btn" data-select-client aria-label="Ver progreso de la orden PS-2610-0041">Ver progreso</button></td>
+                  </tr>
+                  <tr data-folio="PS-2610-0043" data-device="PC · Dell OptiPlex 7090 — 24/10/2026 16:10" data-status="Lista para entrega" data-step="4" data-update="Mantenimiento térmico finalizado y probado. Su equipo ya está listo para retiro en mostrador.">
+                    <th scope="row"><span class="folio-tag">PS-2610-0043</span></th><td>PC · Dell OptiPlex 7090</td><td>Reinicio continuo y ruido en ventilador.</td><td>24/10/2026 16:10</td><td><span class="badge badge-green">Lista para entrega</span></td><td><button type="button" class="table-action-btn" data-select-client aria-label="Ver progreso de la orden PS-2610-0043">Ver progreso</button></td>
+                  </tr>
+                  <tr data-folio="PS-2610-0038" data-device="Laptop · HP EliteBook 840 — 15/10/2026 11:20" data-status="Entregada" data-step="4" data-update="Equipo entregado en mostrador local el 17/10/2026.">
+                    <th scope="row"><span class="folio-tag">PS-2610-0038</span></th><td>Laptop · HP EliteBook 840</td><td>Actualización de unidad SSD 512 GB.</td><td>15/10/2026 11:20</td><td><span class="badge badge-green">Entregada</span></td><td><button type="button" class="table-action-btn" data-select-client aria-label="Ver progreso de la orden PS-2610-0038">Ver progreso</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <!-- F. PANTALLA 2.5: USUARIOS DEL PERSONAL (ADMINISTRADOR) -->
+        <section id="view-admin" class="view-section hidden" aria-labelledby="page-main-title">
+          <aside class="info-banner info-amber" role="note"><span aria-hidden="true">!</span><p><strong>Alcance exclusivo de personal interno:</strong> Este módulo <strong>no gestiona cuentas de clientes</strong>; estas nacen automáticamente en Recepción (2.3 Nueva orden).</p></aside>
+          <section class="card" aria-labelledby="admin-table-heading">
+            <h2 id="admin-table-heading" class="card__title">Personal del taller</h2>
+            <p class="card__subtitle">Gestión de cuentas de Técnicos, Coordinadores y Administradores.</p>
+            <div class="table-container" tabindex="0">
+              <table class="data-table">
+                <caption class="sr-only">Usuarios del personal interno de Proservis</caption>
+                <thead><tr><th scope="col">Usuario</th><th scope="col">Correo</th><th scope="col">Rol</th><th scope="col">Estado</th><th scope="col">Acción</th></tr></thead>
+                <tbody id="admin-staff-tbody">
+                  <tr><th scope="row">Laura Méndez</th><td>laura.mendez@proservis.local</td><td><span class="badge badge-neutral">Coordinador</span></td><td><span class="badge badge-green">Activo</span></td><td><button type="button" class="btn btn-danger-outline btn-sm" data-toggle-staff aria-label="Desactivar cuenta de Laura Méndez">Desactivar</button></td></tr>
+                  <tr><th scope="row">Carlos Ruiz</th><td>carlos.ruiz@proservis.local</td><td><span class="badge badge-neutral">Técnico</span></td><td><span class="badge badge-green">Activo</span></td><td><button type="button" class="btn btn-danger-outline btn-sm" data-toggle-staff aria-label="Desactivar cuenta de Carlos Ruiz">Desactivar</button></td></tr>
+                  <tr><th scope="row">Diego Santos</th><td>diego.santos@proservis.local</td><td><span class="badge badge-neutral">Técnico</span></td><td><span class="badge badge-green">Activo</span></td><td><button type="button" class="btn btn-danger-outline btn-sm" data-toggle-staff aria-label="Desactivar cuenta de Diego Santos">Desactivar</button></td></tr>
+                  <tr><th scope="row">Marco Villalba</th><td>marco.villalba@proservis.local</td><td><span class="badge badge-neutral">Técnico</span></td><td><span class="badge badge-red">Inactivo</span></td><td><button type="button" class="btn btn-secondary btn-sm" data-toggle-staff aria-label="Reactivar cuenta de Marco Villalba">Reactivar</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal + Dar de alta personal (Vista 2.5) -->
+  <div id="staff-modal-backdrop" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-staff-title">
+    <article class="modal-dialog">
+      <header class="modal-header"><h2 id="modal-staff-title" class="modal-title">Dar de alta personal del taller</h2><button type="button" id="btn-close-staff-modal" class="modal-close-btn" aria-label="Cerrar modal de alta">✕</button></header>
+      <form id="staff-create-form" novalidate>
+        <div class="modal-body">
+          <p id="staff-modal-error" class="form-error hidden" role="alert"></p>
+          <div class="form-group">
+            <label for="staff-name" class="form-label">Nombre completo <span class="req-mark" aria-hidden="true">*</span></label>
+            <input type="text" id="staff-name" class="form-control" placeholder="Ej. Sofía Herrera" aria-describedby="staff-name-hint" required />
+            <small id="staff-name-hint" class="form-hint">Nombre y apellidos del trabajador.</small>
+          </div>
+          <div class="form-group">
+            <label for="staff-email" class="form-label">Correo institucional <span class="req-mark" aria-hidden="true">*</span></label>
+            <input type="email" id="staff-email" class="form-control" placeholder="sofia.herrera@proservis.local" aria-describedby="staff-email-hint" required />
+            <small id="staff-email-hint" class="form-hint">Correo asignado en Proservis.</small>
+          </div>
+          <div class="form-group form-group--flush">
+            <label for="staff-role" class="form-label">Rol <span class="req-mark" aria-hidden="true">*</span></label>
+            <select id="staff-role" class="form-control" aria-describedby="staff-role-hint" required><option value="Técnico">Técnico</option><option value="Coordinador">Coordinador</option><option value="Administrador">Administrador</option></select>
+            <small id="staff-role-hint" class="form-hint">Solo personal interno (sin clientes).</small>
+          </div>
+        </div>
+        <footer class="modal-footer"><button type="button" id="btn-cancel-staff-modal" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary">Guardar trabajador</button></footer>
+      </form>
+    </article>
+  </div>
+
+  <div id="toast-container" class="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+  <script src="js/app.js"></script>
+</body>
+</html>
